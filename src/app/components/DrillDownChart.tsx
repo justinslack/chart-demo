@@ -91,6 +91,12 @@ const DrillDownChart = () => {
 				grid: { display: false },
 				ticks: {
 					color: "#A4ABB2",
+					font: {
+						family: "Montserrat, sans-serif",
+						size: 14,
+						weight: "500",
+						lineHeight: 1.5,
+					},
 				},
 			},
 			y: {
@@ -103,6 +109,12 @@ const DrillDownChart = () => {
 				min: -20,
 				max: 20,
 				ticks: {
+					font: {
+						family: "Montserrat, sans-serif",
+						size: 14,
+						weight: "500",
+						lineHeight: 1.5,
+					},
 					color: "#A4ABB2",
 					callback: function (tickValue: string | number) {
 						return `${tickValue}%`;
@@ -116,6 +128,12 @@ const DrillDownChart = () => {
 			title: {
 				display: true,
 				text: view === "years" ? "Performance over last five years" : `Performance in ${selectedYear}`,
+				font: {
+					family: "Montserrat, sans-serif",
+					size: 14,
+					weight: "500",
+					lineHeight: 1.5,
+				},
 			},
 			tooltip: {
 				enabled: false,
