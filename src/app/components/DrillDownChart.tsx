@@ -94,7 +94,7 @@ const DrillDownChart = () => {
 					font: {
 						family: "Montserrat, sans-serif",
 						size: 14,
-						weight: "500",
+						weight: 500,
 						lineHeight: 1.5,
 					},
 				},
@@ -112,7 +112,7 @@ const DrillDownChart = () => {
 					font: {
 						family: "Montserrat, sans-serif",
 						size: 14,
-						weight: "500",
+						weight: 500,
 						lineHeight: 1.5,
 					},
 					color: "#A4ABB2",
@@ -131,7 +131,7 @@ const DrillDownChart = () => {
 				font: {
 					family: "Montserrat, sans-serif",
 					size: 14,
-					weight: "500",
+					weight: 500,
 					lineHeight: 1.5,
 				},
 			},
