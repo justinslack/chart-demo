@@ -28,8 +28,8 @@ body {
 /* --- Chart Custom Tooltip Styles --- */
 .custom-tooltip-box {
 	background: #fff;
-	border-radius: 12px;
-	box-shadow: 0 2px 8px rgba(20, 20, 43, 0.04), 0 1.5px 2px rgba(20, 20, 43, 0.04);
+	border-radius: 8px;
+	box-shadow: 0px 2px 7px #76818c26;
 	padding: 16px 20px 12px 20px;
 	min-width: 180px;
 	font-family: inherit;
@@ -44,19 +44,28 @@ body {
 
 .custom-tooltip-value {
 	font-size: 1rem;
-	font-weight: 500;
+	font-weight: 600;
 	color: #23272b;
 }
 
 .custom-tooltip-percent {
-	background: #f2dedb;
-	color: #23272b;
-	font-size: 10px;
+	color: #3c4248;
+	font-size: 12px;
 	border-radius: 4px;
-	padding: 2px 14px;
+	padding: 6px;
 	font-weight: 500;
 	display: inline-flex;
 	align-items: center;
+	gap: 6px;
+}
+
+.custom-tooltip-percent.positive {
+	background: #e6f7e6;
+	color: #1a7f37;
+}
+.custom-tooltip-percent.negative {
+	background: rgb(233, 215, 211);
+	color: #d32f2f;
 }
 
 .custom-tooltip-title {
