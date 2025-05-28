@@ -126,7 +126,7 @@ const DrillDownChart = () => {
 				{
 					label: "Total Performance",
 					data: randomData(YEARS.length),
-					backgroundColor: "rgba(153, 102, 255, 1)",
+					backgroundColor: "rgba(75, 192, 192, 0.5)",
 					barThickness: 50,
 				},
 			],
