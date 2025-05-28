@@ -66,7 +66,7 @@ function CustomTooltip(context: { chart: Chart; tooltip: TooltipModel<"bar"> }) 
           <span class="custom-tooltip-percent">${percent} ${direction}</span>
         </div>
         <div class="custom-tooltip-title">
-          Prescient Absolute<br/>Balanced Fund B3
+          Prescient Unit Trust<br>Investments (PRE00648)
         </div>
       </div>
     `;
