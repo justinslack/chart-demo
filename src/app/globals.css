@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: #ffffff;
+	--foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+/* --- Chart Custom Tooltip Styles --- */
+.custom-tooltip-box {
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(20, 20, 43, 0.04), 0 1.5px 2px rgba(20, 20, 43, 0.04);
+	padding: 16px 20px 12px 20px;
+	min-width: 180px;
+	font-family: inherit;
+}
+
+.custom-tooltip-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.custom-tooltip-value {
+	font-size: 1rem;
+	font-weight: 500;
+	color: #23272b;
+}
+
+.custom-tooltip-percent {
+	background: #f2dedb;
+	color: #23272b;
+	font-size: 10px;
+	border-radius: 4px;
+	padding: 2px 14px;
+	font-weight: 500;
+	display: inline-flex;
+	align-items: center;
+}
+
+.custom-tooltip-title {
+	margin-top: 12px;
+	font-size: 12px;
+	color: #707981;
+	font-weight: 400;
+	line-height: 1.3;
 }
