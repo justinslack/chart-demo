@@ -45,6 +45,7 @@ export function CustomTooltip(context: { chart: Chart; tooltip: TooltipModel<"ba
 	}
 
 	// Get barData from chart instance
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const barData = (chart as any)._barData || [];
 
 	// Set Text
