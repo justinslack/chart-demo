@@ -85,7 +85,7 @@ export function CustomTooltip(context: { chart: Chart; tooltip: TooltipModel<"ba
 	tooltipEl.style.top = chartY + tooltip.caretY - 30 + "px";
 }
 
-// Uncomment this function if you want to use the tooltip positioning based on bar elements
+// Tooltip positioning based on bar elements
 // 	const bar = tooltip.dataPoints?.[0]?.element;
 // 	if (bar) {
 // 		const rect = bar.getProps(["x", "y", "width", "height"], true);
