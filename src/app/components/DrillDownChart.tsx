@@ -10,7 +10,7 @@ import { CustomTooltip } from "./ToolTip";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Demo data
-const YEARS = ["2020", "2021", "2022", "2023", "2024", "2025"];
+const YEARS = ["2021", "2022", "2023", "2024", "2025"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type BarDatum = { percent: number; value: number };
