@@ -1,30 +1,10 @@
+import React from "react";
 import type { Chart, TooltipModel } from "chart.js";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ArrowRight } from "lucide-react";
 
-const upArrowSVG = `<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clipPath="url(#clip0_14931_3307)">
-<path d="M7 1L1 7" stroke="#3C4248" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M4.16992 1L6.99992 1L6.99992 3.83" stroke="#3C4248" strokeLinecap="round" strokeLinejoin="round"/>
-</g>
-<defs>
-<clipPath id="clip0_14931_3307">
-<rect width="8" height="8" fill="white" transform="translate(0 8) rotate(-90)"/>
-</clipPath>
-</defs>
-</svg>
-`;
-
-const downArrowSVG = `<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clipPath="url(#clip0_14931_3263)">
-<path d="M7 7L1 1" stroke="#3C4248" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M6.99992 4.17V7H4.16992" stroke="#3C4248" strokeLinecap="round" strokeLinejoin="round"/>
-</g>
-<defs>
-<clipPath id="clip0_14931_3263">
-<rect width="8" height="8" fill="white"/>
-</clipPath>
-</defs>
-</svg>
-`;
+const upArrowSVG = renderToStaticMarkup(React.createElement(ArrowRight, { size: 12, style: { transform: "rotate(-90deg)" } }));
+const downArrowSVG = renderToStaticMarkup(React.createElement(ArrowRight, { size: 12, style: { transform: "rotate(90deg)" } }));
 
 export function CustomTooltip(context: { chart: Chart; tooltip: TooltipModel<"bar"> }) {
 	const { chart, tooltip } = context;
