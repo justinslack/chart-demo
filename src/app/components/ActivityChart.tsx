@@ -171,7 +171,7 @@ const ActivityChart = () => {
 	return (
 		<div className="w-full space-y-4">
 			<div className="flex justify-between items-center flex-wrap gap-4">
-				<div className="space-x-2 flex items-center">
+				<div className="space-x-2 flex items-center flex-wrap">
 					<h3 className="text-lg font-semibold">Total Investment Value</h3>
 					<button
 						className={`px-3 py-1 rounded-full text-sm font-medium ${
