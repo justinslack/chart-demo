@@ -1,5 +1,5 @@
 import React from "react";
-import ActivityChart from "../components/ActivityChart";
+import ActivityChart from "../components/ActivityChartAlt";
 
 export default function ActivityPage() {
 	return (
