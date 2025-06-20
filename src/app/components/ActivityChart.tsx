@@ -170,7 +170,7 @@ const ActivityChart = () => {
 
 	return (
 		<div className="w-full space-y-4">
-			<div className="flex justify-between items-center">
+			<div className="flex justify-between items-center flex-wrap gap-4">
 				<div className="space-x-2 flex items-center">
 					<h3 className="text-lg font-semibold">Total Investment Value</h3>
 					<button
@@ -225,7 +225,7 @@ const ActivityChart = () => {
 					Reset
 				</button>
 			</div>
-			<div className="mt-4 grid grid-cols-3 gap-4 bg-gray-100 p-4 rounded-lg">
+			<div className="mt-4 grid md:grid-cols-3 gap-4 bg-gray-100 p-4 rounded-lg">
 				{FUNDS.map((fund) => {
 					const isHidden = !fundVisibility[fund.name];
 					return (
