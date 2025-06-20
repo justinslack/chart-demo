@@ -8,7 +8,7 @@ export function CustomTooltip(context: any) {
 	if (!tooltipEl) {
 		tooltipEl = document.createElement("div");
 		tooltipEl.id = "chartjs-custom-tooltip";
-		tooltipEl.className = "rounded-lg shadow-md bg-white p-4 text-sm text-gray-800 border border-gray-200";
+		tooltipEl.className = "rounded-lg shadow-md bg-white p-4 text-sm text-gray-800 border border-gray-100";
 		tooltipEl.style.position = "absolute";
 		tooltipEl.style.pointerEvents = "none";
 		tooltipEl.style.transition = "all .1s ease";
@@ -33,7 +33,7 @@ export function CustomTooltip(context: any) {
 		const value = dataset.data[index];
 		total += value;
 		return `
-      <div class="flex items-center justify-between mb-1">
+      <div class="flex items-center justify-between mb-1 gap-2">
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full" style="background:${dataset.backgroundColor}"></span>
           ${dataset.label}
@@ -46,7 +46,7 @@ export function CustomTooltip(context: any) {
 	tooltipEl.innerHTML = `
     <div class="mb-2 font-semibold">${label}</div>
     ${rows.join("")}
-    <div class="mt-2 pt-2 border-t text-right font-semibold">Total: R${(total / 1000).toFixed(0)}K</div>
+    <div class="mt-2 ml-2 pt-2 border-t border-gray-300 text-right font-semibold">Total: R${(total / 1000).toFixed(0)}K</div>
   `;
 
 	// Positioning
