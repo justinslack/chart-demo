@@ -63,7 +63,7 @@ const buildChartData = (labels: string[], data: BarDatum[], barThickness: number
 		stack: "combined",
 		barThickness,
 		borderSkipped: false,
-		borderWidth: { top: 4, right: 0, bottom: 0, left: 0 },
+		borderWidth: { top: 1, right: 0, bottom: 0, left: 0 },
 		borderColor: "#ffffff",
 	})),
 });
