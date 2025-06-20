@@ -15,7 +15,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 
 type BarDatum = { percent: number; value: number };
 
-// Randomise ibestment value and performance percentage
+// Randomise investment value and performance percentage
 const randomBarData = (length: number): BarDatum[] =>
 	Array.from({ length }, () => {
 		const percent = Number((Math.random() * 40 - 20).toFixed(1)); // -20% to +20%

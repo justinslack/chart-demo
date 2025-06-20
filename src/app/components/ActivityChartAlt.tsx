@@ -74,7 +74,7 @@ const ActivityChart = () => {
 	const [selectedYear, setSelectedYear] = useState("2025");
 	const [barData, setBarData] = useState<BarDatum[]>([]);
 	const [chartData, setChartData] = useState<ChartData<"bar"> | null>(null);
-	const [barThickness, setBarThickness] = useState(40);
+	const [_barThickness, setBarThickness] = useState(40);
 
 	const getResponsiveBarThickness = (numBars: number): number => {
 		if (typeof window === "undefined") return 40;
