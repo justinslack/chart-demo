@@ -50,7 +50,6 @@ const buildChartData = (labels: string[], data: BarDatum[]) => ({
 		data: data.map((bar) => bar[fund.name]),
 		backgroundColor: fund.color,
 		stack: "combined",
-		barThickness: 40,
 		borderSkipped: false,
 		borderWidth: { top: 4, right: 0, bottom: 0, left: 0 },
 		borderColor: "#ffffff",
@@ -64,7 +63,7 @@ const ActivityChart = () => {
 	const [selectedYear, setSelectedYear] = useState("2025");
 
 	const getResponsiveBarThickness = () => {
-		if (typeof window === "undefined") return 40; // default fallback for SSR
+		if (typeof window === "undefined") return 40;
 		return window.innerWidth < 640 ? 20 : 40;
 	};
 	const [barThickness, setBarThickness] = useState(getResponsiveBarThickness());
@@ -173,15 +172,15 @@ const ActivityChart = () => {
 		},
 		plugins: {
 			legend: { display: false },
-			title: {
-				display: false,
-				// text: `Investment Value (${dateRange === "1y" ? "1 Year" : "5 Years"})`,
-				// font: {
-				// 	family: "Montserrat, sans-serif",
-				// 	size: 14,
-				// 	weight: 500,
-				// },
-			},
+			// title: {
+			// 	display: true,
+			// 	text: `Investment Value (${dateRange === "1y" ? "1 Year" : "5 Years"})`,
+			// 	font: {
+			// 		family: "Montserrat, sans-serif",
+			// 		size: 14,
+			// 		weight: 500,
+			// 	},
+			// },
 			tooltip: {
 				enabled: false,
 				external: (context: any) => {
