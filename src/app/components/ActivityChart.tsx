@@ -191,8 +191,8 @@ const ActivityChart = () => {
 					</button>
 				</div>
 				<div className="flex gap-2 items-center">
-					<label htmlFor="year-select" className="text-sm text-white">
-						Year:
+					<label htmlFor="year-select" className="text-sm text-gray-700">
+						Select year:
 					</label>
 					<select
 						id="year-select"
