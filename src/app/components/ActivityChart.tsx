@@ -35,6 +35,14 @@ const generateRandomFundData = (numBars: number): BarDatum[] =>
 		return entry;
 	});
 
+function debounce(fn: (...args: any[]) => void, delay: number) {
+	let timeoutId: NodeJS.Timeout;
+	return (...args: any[]) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => fn(...args), delay);
+	};
+}
+
 const buildChartData = (labels: string[], data: BarDatum[]) => ({
 	labels,
 	datasets: FUNDS.map((fund) => ({
@@ -54,6 +62,21 @@ const ActivityChart = () => {
 	const labels = dateRange === "1y" ? MONTHS : YEARS;
 	const chartRef = useRef<Chart<"bar"> | null>(null);
 	const [selectedYear, setSelectedYear] = useState("2025");
+
+	const getResponsiveBarThickness = () => {
+		if (typeof window === "undefined") return 40; // default fallback for SSR
+		return window.innerWidth < 640 ? 20 : 40;
+	};
+	const [barThickness, setBarThickness] = useState(getResponsiveBarThickness());
+
+	useEffect(() => {
+		const debouncedResize = debounce(() => {
+			setBarThickness(getResponsiveBarThickness());
+		}, 200);
+
+		window.addEventListener("resize", debouncedResize);
+		return () => window.removeEventListener("resize", debouncedResize);
+	}, []);
 
 	const initialVisibility = FUNDS.reduce<Record<string, boolean>>((acc, fund) => {
 		acc[fund.name] = true;
@@ -114,6 +137,7 @@ const ActivityChart = () => {
 	const chartOptions = {
 		responsive: true,
 		maintainAspectRatio: true,
+		barThickness: barThickness,
 		scales: {
 			x: {
 				stacked: true,
@@ -173,22 +197,24 @@ const ActivityChart = () => {
 			<div className="flex justify-between items-center flex-wrap gap-4">
 				<div className="space-x-2 flex items-center flex-wrap">
 					<h3 className="text-lg font-semibold">Total Investment Value</h3>
-					<button
-						className={`px-3 py-1 rounded-full text-sm font-medium ${
-							dateRange === "1y" ? "bg-[#e7f7f6] text-[#32747f] border border-[#cef0ed]" : "bg-[#f7f8f9] text-gray-700"
-						}`}
-						onClick={() => handleRangeChange("1y")}
-					>
-						1 year
-					</button>
-					<button
-						className={`px-3 py-1 rounded-full text-sm font-medium ${
-							dateRange === "5y" ? "bg-[#e7f7f6] text-[#32747f] border border-[#cef0ed]" : "bg-[#f7f8f9] text-gray-700"
-						}`}
-						onClick={() => handleRangeChange("5y")}
-					>
-						5 years
-					</button>
+					<div>
+						<button
+							className={`px-3 py-1 rounded-full text-sm font-medium ${
+								dateRange === "1y" ? "bg-[#e7f7f6] text-[#32747f] border border-[#cef0ed]" : "bg-[#f7f8f9] text-gray-700"
+							}`}
+							onClick={() => handleRangeChange("1y")}
+						>
+							1 year
+						</button>
+						<button
+							className={`px-3 py-1 rounded-full text-sm font-medium ${
+								dateRange === "5y" ? "bg-[#e7f7f6] text-[#32747f] border border-[#cef0ed]" : "bg-[#f7f8f9] text-gray-700"
+							}`}
+							onClick={() => handleRangeChange("5y")}
+						>
+							5 years
+						</button>
+					</div>
 				</div>
 				<div className="flex gap-2 items-center">
 					<label htmlFor="year-select" className="text-sm text-gray-700">
