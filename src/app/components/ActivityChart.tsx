@@ -14,6 +14,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const YEARS = ["2021", "2022", "2023", "2024", "2025"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const YEARS_RANGE = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+const INCEPTION_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
 
 const FUNDS = [
 	{ name: "Prescient Core Equity Fund A2", color: "#7DE2D1" },
@@ -57,7 +58,7 @@ const buildChartData = (labels: string[], data: BarDatum[]) => ({
 });
 
 const ActivityChart = () => {
-	const [dateRange, setDateRange] = useState<"1y" | "5y">("1y");
+	const [dateRange, setDateRange] = useState<"1y" | "5y" | "inception">("1y");
 	const labels = dateRange === "1y" ? MONTHS : YEARS;
 	const chartRef = useRef<Chart<"bar"> | null>(null);
 	const [selectedYear, setSelectedYear] = useState("2025");
@@ -118,8 +119,17 @@ const ActivityChart = () => {
 	const [barData, setBarData] = useState<BarDatum[]>(() => generateRandomFundData(labels.length));
 	const [chartData, setChartData] = useState(() => buildChartData(labels, barData));
 
-	const handleRangeChange = (range: "1y" | "5y") => {
-		const newLabels = range === "1y" ? MONTHS : YEARS;
+	const handleRangeChange = (range: "1y" | "5y" | "inception") => {
+		let newLabels: string[] = [];
+
+		if (range === "1y") {
+			newLabels = MONTHS;
+		} else if (range === "5y") {
+			newLabels = YEARS;
+		} else {
+			newLabels = INCEPTION_YEARS;
+		}
+
 		const newData = generateRandomFundData(newLabels.length);
 		setBarData(newData);
 		setChartData(buildChartData(newLabels, newData));
@@ -196,7 +206,7 @@ const ActivityChart = () => {
 			<div className="flex justify-between items-center flex-wrap gap-4">
 				<div className="space-x-2 flex items-center flex-wrap">
 					<h3 className="text-lg font-semibold">Total Investment Value</h3>
-					<div>
+					<div className="flex gap-2">
 						<button
 							className={`px-3 py-1 rounded-full text-sm font-medium ${
 								dateRange === "1y" ? "bg-[#e7f7f6] text-[#32747f] border border-[#cef0ed]" : "bg-[#f7f8f9] text-gray-700"
@@ -212,6 +222,14 @@ const ActivityChart = () => {
 							onClick={() => handleRangeChange("5y")}
 						>
 							5 years
+						</button>
+						<button
+							className={`px-3 py-1 rounded-full text-sm font-medium ${
+								dateRange === "inception" ? "bg-[#e7f7f6] text-[#32747f] border border-[#cef0ed]" : "bg-[#f7f8f9] text-gray-700"
+							}`}
+							onClick={() => handleRangeChange("inception")}
+						>
+							Inception
 						</button>
 					</div>
 				</div>
