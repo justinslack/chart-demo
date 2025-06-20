@@ -101,9 +101,10 @@ const ActivityChart = () => {
 	useEffect(() => {
 		const debouncedResize = debounce(() => {
 			if (chartData) {
-				const thickness = getResponsiveBarThickness(chartData.labels.length);
+				const labels = (chartData.labels ?? []) as string[];
+				const thickness = getResponsiveBarThickness(labels.length);
 				setBarThickness(thickness);
-				setChartData(buildChartData(chartData.labels, barData, thickness));
+				setChartData(buildChartData(labels, barData, thickness));
 			}
 		}, 200);
 		window.addEventListener("resize", debouncedResize);
