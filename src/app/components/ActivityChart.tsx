@@ -6,6 +6,7 @@ import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import type { Chart } from "chart.js";
 import { CustomTooltip } from "./ToolTipActivity";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 // import { title } from "process";
 
@@ -237,25 +238,27 @@ const ActivityChart = () => {
 					<label htmlFor="year-select" className="text-sm text-gray-700">
 						Select year:
 					</label>
-					<select
-						id="year-select"
+					<Select
 						value={selectedYear}
-						onChange={(e) => {
-							const year = e.target.value;
+						onValueChange={(year) => {
 							setSelectedYear(year);
 							const newData = generateRandomFundData(MONTHS.length);
 							setBarData(newData);
 							setChartData(buildChartData(MONTHS, newData));
 							setDateRange("1y");
 						}}
-						className="text-sm rounded-md px-2 py-1 bg-white text-gray-800 border border-gray-300"
 					>
-						{YEARS_RANGE.map((year) => (
-							<option key={year} value={year}>
-								{year}
-							</option>
-						))}
-					</select>
+						<SelectTrigger className="w-[120px] text-sm rounded-md px-2 py-1 bg-white text-gray-800 border border-gray-300">
+							<SelectValue placeholder="Select year" />
+						</SelectTrigger>
+						<SelectContent>
+							{YEARS_RANGE.map((year) => (
+								<SelectItem key={year} value={year}>
+									{year}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			</div>
 			<Bar ref={chartRef} data={chartData} options={chartOptions} />

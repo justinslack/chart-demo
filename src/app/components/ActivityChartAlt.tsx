@@ -9,6 +9,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import type { Chart } from "chart.js";
 import { CustomTooltip } from "./ToolTipActivity";
 import type { ChartData } from "chart.js";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -232,24 +233,26 @@ const ActivityChart = () => {
 					<label htmlFor="year-select" className="text-sm text-gray-700">
 						Select year:
 					</label>
-					<select
-						id="year-select"
+					<Select
 						value={selectedYear}
-						onChange={(e) => {
-							const year = e.target.value;
+						onValueChange={(year) => {
 							setSelectedYear(year);
 							const labels = MONTHS.map((m) => `${m} ${year}`);
 							updateChart(labels);
 							setDateRange("1y");
 						}}
-						className="text-sm rounded-md px-2 py-1 bg-white text-gray-800 border border-gray-300"
 					>
-						{YEARS_RANGE.map((year) => (
-							<option key={year} value={year}>
-								{year}
-							</option>
-						))}
-					</select>
+						<SelectTrigger className="w-[120px] text-sm rounded-md px-2 py-1 bg-white text-gray-800 border border-gray-300">
+							<SelectValue placeholder="Select year" />
+						</SelectTrigger>
+						<SelectContent>
+							{YEARS_RANGE.map((year) => (
+								<SelectItem key={year} value={year}>
+									{year}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			</div>
 
