@@ -53,7 +53,7 @@ const buildChartData = (labels: string[], data: BarDatum[]) => ({
 		backgroundColor: fund.color,
 		stack: "combined",
 		borderSkipped: false,
-		borderWidth: { top: 4, right: 0, bottom: 0, left: 0 },
+		borderWidth: { top: 1, right: 0, bottom: 0, left: 0 },
 		borderColor: "#ffffff",
 	})),
 });
@@ -120,6 +120,9 @@ const ActivityChart = () => {
 	const [barData, setBarData] = useState<BarDatum[]>(() => generateRandomFundData(labels.length));
 	const [chartData, setChartData] = useState(() => buildChartData(labels, barData));
 
+	// Add a state to track previous view for back navigation
+	const [prevView, setPrevView] = useState<{ dateRange: string; chartData: any; barData: any; selectedYear: string } | null>(null);
+
 	const handleRangeChange = (range: "1y" | "5y" | "inception") => {
 		let newLabels: string[] = [];
 
@@ -137,12 +140,34 @@ const ActivityChart = () => {
 		setDateRange(range);
 	};
 
-	useEffect(() => {
-		return () => {
-			const el = document.getElementById("chartjs-custom-tooltip");
-			if (el) el.remove();
-		};
-	}, []);
+	const handleBarClick = (event: any, elements: any[]) => {
+		if ((dateRange === "5y" || dateRange === "inception") && elements && elements.length > 0) {
+			const barIndex = elements[0].index;
+			const year = chartData.labels[barIndex];
+			// Save current view for back button
+			setPrevView({
+				dateRange,
+				chartData,
+				barData,
+				selectedYear,
+			});
+			setSelectedYear(year);
+			const newData = generateRandomFundData(MONTHS.length);
+			setBarData(newData);
+			setChartData(buildChartData(MONTHS, newData));
+			setDateRange("1y");
+		}
+	};
+
+	const handleBack = () => {
+		if (prevView) {
+			setDateRange(prevView.dateRange as "1y" | "5y" | "inception");
+			setChartData(prevView.chartData);
+			setBarData(prevView.barData);
+			setSelectedYear(prevView.selectedYear);
+			setPrevView(null);
+		}
+	};
 
 	const chartOptions = {
 		responsive: true,
@@ -200,6 +225,7 @@ const ActivityChart = () => {
 				},
 			},
 		},
+		onClick: handleBarClick,
 	};
 
 	return (
@@ -232,6 +258,11 @@ const ActivityChart = () => {
 						>
 							Inception
 						</button>
+						{prevView && (
+							<button className="px-3 py-1 rounded-full text-sm bg-transparent text-gray-700 border-0 underline" onClick={handleBack}>
+								Back
+							</button>
+						)}
 					</div>
 				</div>
 				<div className="flex gap-2 items-center">
