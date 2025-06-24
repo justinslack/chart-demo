@@ -24,12 +24,46 @@ const randomBarData = (length: number): BarDatum[] =>
 		return { percent, value };
 	});
 
+// Plugin to draw grey backgrounds behind each bar
+const BarBackgroundPlugin = {
+	id: "barBackground",
+	beforeDatasetsDraw(chart: ChartJS) {
+		const { ctx, chartArea, scales } = chart;
+		if (!chartArea) return;
+
+		const yAxis = scales.y;
+		const meta = chart.getDatasetMeta(0);
+		// const data = chart.data.datasets[0]?.data || [];
+
+		// Get the min and max from the y-axis scale for uniform backgrounds
+		const yMin = yAxis.getPixelForValue(yAxis.min);
+		const yMax = yAxis.getPixelForValue(yAxis.max);
+
+		meta.data.forEach((bar: any) => {
+			const barWidth = bar.width;
+			const x = bar.x - barWidth / 2;
+
+			ctx.save();
+			ctx.fillStyle = "#F3F4F6"; // light grey
+			ctx.fillRect(x, yMax, barWidth, yMin - yMax);
+			ctx.restore();
+		});
+	},
+};
+
 const DrillDownChart = () => {
 	const [view, setView] = useState<"years" | "months">("years");
 	const [selectedYear, setSelectedYear] = useState<string | null>(null);
 	const [showLine, setShowLine] = useState(false);
 	const [barData, setBarData] = useState<BarDatum[]>(randomBarData(YEARS.length));
 	const chartRef = useRef<ChartJSOrUndefined<"bar">>(undefined);
+
+	// Calculate min and max from data, add ±2 padding
+	const allPercents = barData.map((d) => d.percent);
+	const dataMin = Math.min(...allPercents);
+	const dataMax = Math.max(...allPercents);
+	const yMin = Math.floor(dataMin) - 2;
+	const yMax = Math.ceil(dataMax) + 2;
 
 	const [chartData, setChartData] = useState<ChartData<"bar" | "line">>({
 		labels: YEARS,
@@ -116,10 +150,14 @@ const DrillDownChart = () => {
 				},
 			},
 			y: {
-				grid: { display: true, color: "rgb(247, 248, 249)" },
+				grid: {
+					display: true,
+					color: "rgb(247, 248, 249)",
+					lineWidth: 1,
+				},
 				beginAtZero: false,
-				min: -20,
-				max: 20,
+				min: yMin,
+				max: yMax,
 				ticks: {
 					font: { family: "Montserrat, sans-serif", size: 14, weight: 500, lineHeight: 1.5 },
 					color: "#A4ABB2",
@@ -186,7 +224,12 @@ const DrillDownChart = () => {
 				</button>
 			</div>
 
-			<Bar ref={chartRef} data={combinedChartData as ChartData<"bar", (number | [number, number] | null)[], unknown>} options={chartOptions} />
+			<Bar
+				ref={chartRef}
+				data={combinedChartData as ChartData<"bar", (number | [number, number] | null)[], unknown>}
+				options={chartOptions}
+				plugins={[BarBackgroundPlugin]}
+			/>
 
 			<div className="flex justify-center mt-4">
 				<label className="flex items-center gap-2 cursor-pointer select-none">
