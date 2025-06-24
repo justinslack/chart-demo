@@ -19,7 +19,7 @@ export default function Home() {
 				href="/dashboard-broker-donut"
 				className="p-8 border border-gray-300 rounded-lg text-center no-underline text-inherit flex items-center justify-center hover:shadow-md transition"
 			>
-				Broker Dashboard Chart
+				Brokerage Dashboard Chart
 			</Link>
 		</div>
 	);
