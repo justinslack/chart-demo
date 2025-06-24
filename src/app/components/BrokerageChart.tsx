@@ -32,6 +32,9 @@ const getChartData = (items: typeof advisorData) => ({
 			borderWidth: 2,
 			borderColor: "#fff",
 			hoverOffset: 0,
+			hoverBackgroundColor: items.map((item) => item.color),
+			hoverBorderColor: "#fff",
+			hoverBorderWidth: 2,
 		},
 	],
 });
@@ -87,9 +90,9 @@ export default function DonutChartSwitcher() {
 			</div>
 
 			{/* Legend */}
-			<div className="mt-6 space-y-4 text-sm w-full">
+			<div className="mt-6 space-y-2 text-sm w-full">
 				{dataSet.map((item) => (
-					<div key={item.name} className="flex items-center justify-between gap-2">
+					<div key={item.name} className="flex items-center justify-between gap-2 border-b pb-2 last:border-0">
 						<div className="flex items-center gap-2">
 							<div className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />
 							<span>{item.name}</span>

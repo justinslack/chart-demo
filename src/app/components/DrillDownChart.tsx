@@ -41,6 +41,9 @@ const DrillDownChart = () => {
 				barThickness: 50,
 				type: "bar" as const,
 				order: 1,
+				hoverBackgroundColor: "rgba(140, 217, 212, 1)", // No color change on hover
+				hoverBorderColor: "rgba(140, 217, 212, 1)", // No border color change on hover
+				hoverBorderWidth: 0, // No border width change on hover
 			},
 		],
 	});
@@ -60,6 +63,9 @@ const DrillDownChart = () => {
 					barThickness: 50,
 					type: "bar" as const,
 					order: 1,
+					hoverBackgroundColor: "rgba(140, 217, 212, 1)",
+					hoverBorderColor: "rgba(140, 217, 212, 1)",
+					hoverBorderWidth: 0,
 				},
 			],
 		});
@@ -85,6 +91,9 @@ const DrillDownChart = () => {
 					barThickness: 50,
 					type: "bar" as const,
 					order: 1,
+					hoverBackgroundColor: "rgba(140, 217, 212, 1)",
+					hoverBorderColor: "rgba(140, 217, 212, 1)",
+					hoverBorderWidth: 0,
 				},
 			],
 		});

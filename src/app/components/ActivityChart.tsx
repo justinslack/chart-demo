@@ -54,6 +54,9 @@ const buildChartData = (labels: string[], data: BarDatum[]) => ({
 		borderSkipped: false,
 		borderWidth: { top: 1, right: 0, bottom: 0, left: 0 },
 		borderColor: "#ffffff",
+		hoverBackgroundColor: fund.color, // No color change on hover
+		hoverBorderColor: "#ffffff", // No border color change on hover
+		hoverBorderWidth: { top: 1, right: 0, bottom: 0, left: 0 }, // Same as normal
 	})),
 });
 
