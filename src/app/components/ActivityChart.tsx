@@ -14,8 +14,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const YEARS = ["2021", "2022", "2023", "2024", "2025"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const YEARS_RANGE = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
-const INCEPTION_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+const INCEPTION_YEARS = Array.from({ length: 2025 - 1994 + 1 }, (_, i) => (1994 + i).toString());
 
 const FUNDS = [
 	{ name: "Prescient Core Equity Fund A2", color: "#7DE2D1" },
@@ -26,7 +25,7 @@ const FUNDS = [
 	{ name: "Prescient Global Equity Feeder Fund A2", color: "#b7e7e4" },
 ];
 
-type BarDatum = Record<string, number>; // fund name -> value
+type BarDatum = Record<string, number>;
 
 const generateRandomFundData = (numBars: number): BarDatum[] =>
 	Array.from({ length: numBars }, () => {
@@ -64,20 +63,26 @@ const ActivityChart = () => {
 	const chartRef = useRef<Chart<"bar"> | null>(null);
 	const [selectedYear, setSelectedYear] = useState("2025");
 
-	const getResponsiveBarThickness = () => {
-		if (typeof window === "undefined") return 40;
-		return window.innerWidth < 640 ? 20 : 40;
+	const getResponsiveBarThickness = (numBars: number) => {
+		if (typeof window === "undefined") return 20;
+		const containerWidth = window.innerWidth < 640 ? window.innerWidth - 40 : 600; // fallback width
+		const minThickness = 4;
+		const maxThickness = 40;
+		const calculated = Math.max(minThickness, Math.min(maxThickness, Math.floor(containerWidth / (numBars * 1.5))));
+		return calculated;
 	};
-	const [barThickness, setBarThickness] = useState(getResponsiveBarThickness());
+
+	const [barThickness, setBarThickness] = useState(getResponsiveBarThickness(labels.length));
 
 	useEffect(() => {
 		const debouncedResize = debounce(() => {
-			setBarThickness(getResponsiveBarThickness());
+			setBarThickness(getResponsiveBarThickness(labels.length));
 		}, 200);
 
 		window.addEventListener("resize", debouncedResize);
 		return () => window.removeEventListener("resize", debouncedResize);
-	}, []);
+		// Also update when labels change (e.g., when switching ranges)
+	}, [labels.length]);
 
 	const initialVisibility = FUNDS.reduce<Record<string, boolean>>((acc, fund) => {
 		acc[fund.name] = true;
@@ -119,8 +124,6 @@ const ActivityChart = () => {
 
 	const [barData, setBarData] = useState<BarDatum[]>(() => generateRandomFundData(labels.length));
 	const [chartData, setChartData] = useState(() => buildChartData(labels, barData));
-
-	// Add a state to track previous view for back navigation
 	const [prevView, setPrevView] = useState<{ dateRange: string; chartData: any; barData: any; selectedYear: string } | null>(null);
 
 	const handleRangeChange = (range: "1y" | "5y" | "inception") => {
@@ -138,13 +141,13 @@ const ActivityChart = () => {
 		setBarData(newData);
 		setChartData(buildChartData(newLabels, newData));
 		setDateRange(range);
+		setBarThickness(getResponsiveBarThickness(newLabels.length));
 	};
 
 	const handleBarClick = (event: any, elements: any[]) => {
 		if ((dateRange === "5y" || dateRange === "inception") && elements && elements.length > 0) {
 			const barIndex = elements[0].index;
 			const year = chartData.labels[barIndex];
-			// Save current view for back button
 			setPrevView({
 				dateRange,
 				chartData,
@@ -156,6 +159,7 @@ const ActivityChart = () => {
 			setBarData(newData);
 			setChartData(buildChartData(MONTHS, newData));
 			setDateRange("1y");
+			setBarThickness(getResponsiveBarThickness(MONTHS.length));
 		}
 	};
 
@@ -165,6 +169,7 @@ const ActivityChart = () => {
 			setChartData(prevView.chartData);
 			setBarData(prevView.barData);
 			setSelectedYear(prevView.selectedYear);
+			setBarThickness(getResponsiveBarThickness(prevView.chartData.labels.length));
 			setPrevView(null);
 		}
 	};
@@ -173,6 +178,7 @@ const ActivityChart = () => {
 		responsive: true,
 		maintainAspectRatio: true,
 		barThickness: barThickness,
+		_fundVisibility: fundVisibility,
 		scales: {
 			x: {
 				stacked: true,
@@ -277,13 +283,14 @@ const ActivityChart = () => {
 							setBarData(newData);
 							setChartData(buildChartData(MONTHS, newData));
 							setDateRange("1y");
+							setBarThickness(getResponsiveBarThickness(MONTHS.length));
 						}}
 					>
-						<SelectTrigger className="w-[120px] text-sm rounded-md px-2 py-1 bg-white text-gray-800 border border-gray-300">
+						<SelectTrigger id="year-select" name="year-select" className="w-[120px] text-sm rounded-md px-2 py-1 bg-white text-gray-800 border border-gray-300">
 							<SelectValue placeholder="Select year" />
 						</SelectTrigger>
-						<SelectContent>
-							{YEARS_RANGE.map((year) => (
+						<SelectContent style={{ maxHeight: "250px", overflowY: "auto" }}>
+							{INCEPTION_YEARS.map((year) => (
 								<SelectItem key={year} value={year}>
 									{year}
 								</SelectItem>
@@ -293,16 +300,18 @@ const ActivityChart = () => {
 				</div>
 			</div>
 			<Bar ref={chartRef} data={chartData} options={chartOptions} />
-			<div className="inline-flex items-center p-3 rounded-lg gap-2">
+			<div className="inline-flex items-center p-3 rounded-lg gap-2 h-8 mt-8">
 				<h4>Funds showing</h4>
-				<button
-					onClick={resetFundVisibility}
-					className="ml-auto px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700"
-				>
-					Reset
-				</button>
+				{Object.values(fundVisibility).some((v) => !v) && (
+					<button
+						onClick={resetFundVisibility}
+						className="ml-auto px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700"
+					>
+						Reset
+					</button>
+				)}
 			</div>
-			<div className="mt-4 grid md:grid-cols-3 gap-4 bg-gray-100 p-4 rounded-lg">
+			<div className="grid md:grid-cols-3 gap-4 bg-gray-100 p-4 rounded-lg">
 				{FUNDS.map((fund) => {
 					const isHidden = !fundVisibility[fund.name];
 					return (

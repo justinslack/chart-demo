@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// ToolTip.ts
 export function CustomTooltip(context: any) {
 	const { chart, tooltip } = context;
 	let tooltipEl = document.getElementById("chartjs-custom-tooltip");
 
-	// Create element if it doesn't exist
 	if (!tooltipEl) {
 		tooltipEl = document.createElement("div");
 		tooltipEl.id = "chartjs-custom-tooltip";
@@ -15,13 +13,11 @@ export function CustomTooltip(context: any) {
 		document.body.appendChild(tooltipEl);
 	}
 
-	// Hide if not active
 	if (tooltip.opacity === 0) {
 		tooltipEl.style.opacity = "0";
 		return;
 	}
 
-	// Get data for this index
 	const index = tooltip.dataPoints?.[0]?.dataIndex;
 	if (index === undefined) return;
 
@@ -29,16 +25,22 @@ export function CustomTooltip(context: any) {
 	const label = chart.data.labels[index];
 	let total = 0;
 
+	// Get fund visibility from chart instance (set in external tooltip handler)
+	const fundVisibility = chart.options._fundVisibility || {};
+
 	const rows = datasets.map((dataset: any) => {
 		const value = dataset.data[index];
-		total += value;
+		const isHidden = dataset.hidden || fundVisibility[dataset.label] === false;
+		if (!isHidden) {
+			total += value;
+		}
 		return `
       <div class="flex items-center justify-between mb-1 gap-2">
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full" style="background:${dataset.backgroundColor}"></span>
-          ${dataset.label}
+          <span style="${isHidden ? "text-decoration: line-through; color: #b0b0b0;" : ""}">${dataset.label}</span>
         </div>
-        <div class="font-semibold">R${(value / 1000).toFixed(0)}K</div>
+        <div class="font-semibold ${isHidden ? "line-through text-gray-400" : ""}">R${(value / 1000).toFixed(0)}K</div>
       </div>
     `;
 	});
@@ -49,7 +51,6 @@ export function CustomTooltip(context: any) {
     <div class="mt-2 ml-2 pt-2 border-t border-gray-300 text-right font-semibold">Total: R${(total / 1000).toFixed(0)}K</div>
   `;
 
-	// Positioning
 	const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
 
 	tooltipEl.style.opacity = "1";

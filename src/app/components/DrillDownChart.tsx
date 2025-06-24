@@ -3,65 +3,72 @@
 
 import React, { useState, useRef } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import type { Chart } from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from "chart.js";
+import type { Chart, ChartData, ChartTypeRegistry } from "chart.js";
 import { CustomTooltip } from "./ToolTip";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Type alias for compatibility with ref
+type ChartJSOrUndefined<TType extends keyof ChartTypeRegistry = "bar"> = Chart<TType> | undefined;
 
-// Demo data
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+
 const YEARS = ["2021", "2022", "2023", "2024", "2025"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type BarDatum = { percent: number; value: number };
 
-// Randomise investment value and performance percentage
 const randomBarData = (length: number): BarDatum[] =>
 	Array.from({ length }, () => {
-		const percent = Number((Math.random() * 40 - 20).toFixed(1)); // -20% to +20%
-		const value = Math.floor(Math.random() * 200000) - 100000; // -100,000 to +100,000
+		const percent = Number((Math.random() * 40 - 20).toFixed(1));
+		const value = Math.floor(Math.random() * 200000) - 100000;
 		return { percent, value };
 	});
 
 const DrillDownChart = () => {
 	const [view, setView] = useState<"years" | "months">("years");
 	const [selectedYear, setSelectedYear] = useState<string | null>(null);
-	const chartRef = useRef<Chart<"bar"> | null>(null);
-
+	const [showLine, setShowLine] = useState(false);
 	const [barData, setBarData] = useState<BarDatum[]>(randomBarData(YEARS.length));
-	const [chartData, setChartData] = useState({
+	const chartRef = useRef<ChartJSOrUndefined<"bar">>(undefined);
+
+	const [chartData, setChartData] = useState<ChartData<"bar" | "line">>({
 		labels: YEARS,
 		datasets: [
 			{
 				label: "Performance (%)",
 				data: barData.map((d) => d.percent),
-				backgroundColor: "rgb(140, 217, 212)",
+				backgroundColor: "rgba(140, 217, 212, 1)",
 				barThickness: 50,
+				type: "bar" as const,
+				order: 1,
 			},
 		],
 	});
 
+	const switchToMonths = (index: number) => {
+		const year = YEARS[index];
+		setSelectedYear(year);
+		const newBarData = randomBarData(MONTHS.length);
+		setBarData(newBarData);
+		setChartData({
+			labels: MONTHS,
+			datasets: [
+				{
+					label: `Performance per ${year} (%)`,
+					data: newBarData.map((d) => d.percent),
+					backgroundColor: "rgba(140, 217, 212, 1)",
+					barThickness: 50,
+					type: "bar" as const,
+					order: 1,
+				},
+			],
+		});
+		setView("months");
+	};
+
 	const handleBarClick = (event: import("chart.js").ChartEvent, elements: import("chart.js").ActiveElement[]) => {
-		if (elements && elements.length > 0) {
-			const index = elements[0].index;
-			if (view === "years") {
-				const year = YEARS[index];
-				setSelectedYear(year);
-				const newBarData = randomBarData(MONTHS.length);
-				setBarData(newBarData);
-				setChartData({
-					labels: MONTHS,
-					datasets: [
-						{
-							label: `Performance per ${year} (%)`,
-							data: newBarData.map((d) => d.percent),
-							backgroundColor: "rgb(140, 217, 212)",
-							barThickness: 50,
-						},
-					],
-				});
-				setView("months");
-			}
+		if (elements.length > 0 && view === "years") {
+			switchToMonths(elements[0].index);
 		}
 	};
 
@@ -74,8 +81,10 @@ const DrillDownChart = () => {
 				{
 					label: "Total Performance (%)",
 					data: newBarData.map((d) => d.percent),
-					backgroundColor: "rgb(140, 217, 212)",
+					backgroundColor: "rgba(140, 217, 212, 1)",
 					barThickness: 50,
+					type: "bar" as const,
+					order: 1,
 				},
 			],
 		});
@@ -83,57 +92,40 @@ const DrillDownChart = () => {
 		setSelectedYear(null);
 	};
 
-	const chartOptions = {
+	const chartOptions: import("chart.js").ChartOptions<"bar"> = {
 		responsive: true,
 		maintainAspectRatio: true,
+		elements: {
+			point: { radius: 0, hoverRadius: 4 },
+		},
 		scales: {
 			x: {
 				grid: { display: false },
 				ticks: {
 					color: "#A4ABB2",
-					font: {
-						family: "Montserrat, sans-serif",
-						size: 14,
-						weight: 500,
-						lineHeight: 1.5,
-					},
+					font: { family: "Montserrat, sans-serif", size: 14, weight: 500, lineHeight: 1.5 },
 				},
 			},
 			y: {
-				grid: {
-					display: true,
-					color: "rgb(247, 248, 249)",
-					borderColor: "rgb(247, 248, 249)",
-				},
+				grid: { display: true, color: "rgb(247, 248, 249)" },
 				beginAtZero: false,
 				min: -20,
 				max: 20,
 				ticks: {
-					font: {
-						family: "Montserrat, sans-serif",
-						size: 14,
-						weight: 500,
-						lineHeight: 1.5,
-					},
+					font: { family: "Montserrat, sans-serif", size: 14, weight: 500, lineHeight: 1.5 },
 					color: "#A4ABB2",
-					callback: function (tickValue: string | number) {
-						return `${tickValue}%`;
-					},
+					callback: (tickValue) => `${tickValue}%`,
 				},
 			},
 		},
 		onClick: handleBarClick,
+		interaction: { mode: "index", intersect: false },
 		plugins: {
 			legend: { display: false },
 			title: {
-				display: true,
+				display: false,
 				text: view === "years" ? "Performance over last five years" : `Performance in ${selectedYear}`,
-				font: {
-					family: "Montserrat, sans-serif",
-					size: 14,
-					weight: 500,
-					lineHeight: 1.5,
-				},
+				font: { family: "Montserrat, sans-serif", size: 14, weight: 500, lineHeight: 1.5 },
 			},
 			tooltip: {
 				enabled: false,
@@ -152,14 +144,47 @@ const DrillDownChart = () => {
 		};
 	}, []);
 
+	const lineDataset = {
+		label: "Performance (%) (Line)",
+		data: barData.map((d) => d.percent),
+		borderColor: "rgb(84, 185, 202)",
+		pointBackgroundColor: "rgb(84, 185, 202)",
+		pointBorderColor: "rgb(84, 185, 202)",
+		type: "line" as const,
+		yAxisID: "y",
+		tension: 0.1,
+		fill: true,
+		backgroundColor: "rgba(244, 144, 128, 0.8)",
+		order: 0,
+	};
+
+	const combinedChartData: ChartData<"bar" | "line"> = showLine ? { ...chartData, datasets: [...chartData.datasets, lineDataset] } : chartData;
+
 	return (
 		<div style={{ height: 400 }} className="w-full">
-			{view === "months" && (
-				<button onClick={handleBack} style={{ marginBottom: 10, color: "white", backgroundColor: "#4A90E2", padding: "5px 10px", borderRadius: 5 }}>
-					5 Years
+			<div className="mb-2 flex gap-2">
+				<button
+					className={`px-4 py-1 rounded-full text-sm font-medium ${view === "years" ? "bg-teal-200 text-black" : "bg-gray-200 text-gray-500"}`}
+					onClick={handleBack}
+				>
+					5 years
 				</button>
-			)}
-			<Bar ref={chartRef} data={chartData} options={chartOptions} />
+				<button
+					className={`px-4 py-1 rounded-full text-sm font-medium ${view === "months" ? "bg-teal-200 text-black" : "bg-gray-200 text-gray-500"}`}
+					disabled={view !== "months"}
+				>
+					1 year
+				</button>
+			</div>
+
+			<Bar ref={chartRef} data={combinedChartData as ChartData<"bar", (number | [number, number] | null)[], unknown>} options={chartOptions} />
+
+			<div className="flex justify-center mt-4">
+				<label className="flex items-center gap-2 cursor-pointer select-none">
+					<input type="checkbox" checked={showLine} onChange={() => setShowLine((v) => !v)} className="accent-blue-600" />
+					<span className="text-sm text-gray-700">Show total performance</span>
+				</label>
+			</div>
 		</div>
 	);
 };
