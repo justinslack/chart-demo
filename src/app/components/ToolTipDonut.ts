@@ -3,15 +3,16 @@ import type { Chart, TooltipModel } from "chart.js";
 export function CustomTooltip(context: { chart: Chart; tooltip: TooltipModel<"doughnut"> }) {
 	const { chart, tooltip } = context;
 	let tooltipEl = document.getElementById("chartjs-custom-tooltip");
-	if (!tooltipEl) {
-		tooltipEl = document.createElement("div");
-		tooltipEl.id = "chartjs-custom-tooltip";
-		tooltipEl.style.position = "absolute";
-		tooltipEl.style.pointerEvents = "none";
-		tooltipEl.style.transition = "all .15s ease";
-		tooltipEl.style.zIndex = "9999";
-		document.body.appendChild(tooltipEl);
+	if (tooltipEl) {
+		tooltipEl.remove(); // Remove any existing tooltip before creating a new one
 	}
+	tooltipEl = document.createElement("div");
+	tooltipEl.id = "chartjs-custom-tooltip";
+	tooltipEl.style.position = "absolute";
+	tooltipEl.style.pointerEvents = "none";
+	tooltipEl.style.transition = "all .15s ease";
+	tooltipEl.style.zIndex = "9999";
+	document.body.appendChild(tooltipEl);
 
 	if (tooltip.opacity === 0) {
 		tooltipEl.style.opacity = "0";
