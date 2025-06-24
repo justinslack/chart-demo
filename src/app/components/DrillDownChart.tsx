@@ -3,14 +3,14 @@
 
 import React, { useState, useRef } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController } from "chart.js";
 import type { Chart, ChartData, ChartTypeRegistry } from "chart.js";
 import { CustomTooltip } from "./ToolTip";
 
 // Type alias for compatibility with ref
 type ChartJSOrUndefined<TType extends keyof ChartTypeRegistry = "bar"> = Chart<TType> | undefined;
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController);
 
 const YEARS = ["2021", "2022", "2023", "2024", "2025"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
