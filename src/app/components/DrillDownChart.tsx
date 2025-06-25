@@ -24,7 +24,7 @@ const randomBarData = (length: number): BarDatum[] =>
 		return { percent, value };
 	});
 
-// Plugin to draw grey backgrounds behind each bar
+// Draw grey backgrounds behind each bar
 const BarBackgroundPlugin = {
 	id: "barBackground",
 	beforeDatasetsDraw(chart: ChartJS) {
@@ -33,9 +33,7 @@ const BarBackgroundPlugin = {
 
 		const yAxis = scales.y;
 		const meta = chart.getDatasetMeta(0);
-		// const data = chart.data.datasets[0]?.data || [];
 
-		// Get the min and max from the y-axis scale for uniform backgrounds
 		const yMin = yAxis.getPixelForValue(yAxis.min);
 		const yMax = yAxis.getPixelForValue(yAxis.max);
 
@@ -44,7 +42,7 @@ const BarBackgroundPlugin = {
 			const x = bar.x - barWidth / 2;
 
 			ctx.save();
-			ctx.fillStyle = "#F3F4F6"; // light grey
+			ctx.fillStyle = "rgba(247, 248, 249, 0.95)";
 			ctx.fillRect(x, yMax, barWidth, yMin - yMax);
 			ctx.restore();
 		});
@@ -75,9 +73,9 @@ const DrillDownChart = () => {
 				barThickness: 50,
 				type: "bar" as const,
 				order: 1,
-				hoverBackgroundColor: "rgba(140, 217, 212, 1)", // No color change on hover
-				hoverBorderColor: "rgba(140, 217, 212, 1)", // No border color change on hover
-				hoverBorderWidth: 0, // No border width change on hover
+				hoverBackgroundColor: "rgba(140, 217, 212, 1)",
+				hoverBorderColor: "rgba(140, 217, 212, 1)",
+				hoverBorderWidth: 0,
 			},
 		],
 	});
@@ -163,6 +161,13 @@ const DrillDownChart = () => {
 					color: "#A4ABB2",
 					callback: (tickValue) => `${tickValue}%`,
 				},
+				title: {
+					display: true,
+					text: "Performance (%)",
+					font: { family: "Montserrat, sans-serif", size: 16, weight: 400 },
+					color: "#A4ABB2",
+					padding: { top: 10, bottom: 10 },
+				},
 			},
 		},
 		onClick: handleBarClick,
@@ -194,6 +199,7 @@ const DrillDownChart = () => {
 	const lineDataset = {
 		label: "Performance (%) (Line)",
 		data: barData.map((d) => d.percent),
+		borderWidth: 2,
 		borderColor: "rgb(84, 185, 202)",
 		pointBackgroundColor: "rgb(84, 185, 202)",
 		pointBorderColor: "rgb(84, 185, 202)",
@@ -234,7 +240,7 @@ const DrillDownChart = () => {
 			<div className="flex justify-center mt-4">
 				<label className="flex items-center gap-2 cursor-pointer select-none">
 					<input type="checkbox" checked={showLine} onChange={() => setShowLine((v) => !v)} className="accent-blue-600" />
-					<span className="text-sm text-gray-700">Show total performance</span>
+					<span className="text-sm text-gray-700">Show line performance</span>
 				</label>
 			</div>
 		</div>
