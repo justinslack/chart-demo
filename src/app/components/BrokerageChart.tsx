@@ -8,7 +8,7 @@ import { CustomTooltip } from "./ToolTipDonut";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const advisorData = [
-	{ name: "Marley Septimus", value: 390000, percent: 30, color: "rgb(112, 164, 188)" },
+	{ name: "Liam Hawthorne", value: 390000, percent: 30, color: "rgb(112, 164, 188)" },
 	{ name: "Hanna Kenter", value: 364000, percent: 28, color: "rgb(153, 227, 195)" },
 	{ name: "Adam Curtis", value: 260000, percent: 20, color: "rgb(35, 85, 114)" },
 	{ name: "John Vetros", value: 156000, percent: 12, color: "rgb(93, 202, 165)" },
