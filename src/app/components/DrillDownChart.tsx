@@ -3,14 +3,14 @@
 
 import React, { useState, useRef } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController } from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController, Filler } from "chart.js";
 import type { Chart, ChartData, ChartTypeRegistry } from "chart.js";
 import { CustomTooltip } from "./ToolTip";
 
 // Type alias for compatibility with ref
 type ChartJSOrUndefined<TType extends keyof ChartTypeRegistry = "bar"> = Chart<TType> | undefined;
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController);
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController, Filler);
 
 const YEARS = ["2021", "2022", "2023", "2024", "2025"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -119,7 +119,7 @@ const DrillDownChart = () => {
 				{
 					label: "Total Performance (%)",
 					data: newBarData.map((d) => d.percent),
-					backgroundColor: "rgba(140, 217, 212, 1)",
+					backgroundColor: "rgba(241, 251, 250, 1.00)",
 					barThickness: 50,
 					type: "bar" as const,
 					order: 1,
@@ -206,8 +206,8 @@ const DrillDownChart = () => {
 		type: "line" as const,
 		yAxisID: "y",
 		tension: 0.1,
-		fill: true,
-		backgroundColor: "rgba(244, 144, 128, 0.8)",
+		// fill: true,
+		// backgroundColor: "#333333",
 		order: 0,
 	};
 

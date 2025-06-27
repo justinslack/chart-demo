@@ -35,7 +35,7 @@ export function CustomTooltip(context: any) {
 			total += value;
 		}
 		return `
-      <div class="flex items-center justify-between mb-1 gap-2">
+      <div class="flex items-center justify-between mb-1 gap-2 bg-white">
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full" style="background:${dataset.backgroundColor}"></span>
           <span style="${isHidden ? "text-decoration: line-through; color: #b0b0b0;" : ""}">${dataset.label}</span>

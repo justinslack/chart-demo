@@ -10,6 +10,12 @@ export default function Home() {
 				Performance drilldown
 			</Link>
 			<Link
+				href="/performance-alt"
+				className="p-8 border border-gray-300 rounded-lg text-center no-underline text-inherit flex items-center justify-center hover:shadow-md transition"
+			>
+				Performance drilldown - alt
+			</Link>
+			<Link
 				href="/activity"
 				className="p-8 border border-gray-300 rounded-lg text-center no-underline text-inherit flex items-center justify-center hover:shadow-md transition"
 			>
