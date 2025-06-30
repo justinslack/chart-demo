@@ -4,35 +4,20 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartOptions } from "cha
 import { Doughnut } from "react-chartjs-2";
 import React, { useRef, useState, useEffect } from "react";
 import { CustomTooltip } from "./ToolTipDonut";
+import { advisorData, investmentData } from "../../data/chartDataUtils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const advisorData = [
-	{ name: "Liam Hawthorne", value: 390000, percent: 30, color: "rgb(112, 164, 188)" },
-	{ name: "Hanna Kenter", value: 364000, percent: 28, color: "rgb(153, 227, 195)" },
-	{ name: "Adam Curtis", value: 260000, percent: 20, color: "rgb(35, 85, 114)" },
-	{ name: "John Vetros", value: 156000, percent: 12, color: "rgb(93, 202, 165)" },
-	{ name: "Other", value: 130000, percent: 10, color: "rgb(187, 191, 197)" },
-];
-
-const investmentData = [
-	{ name: "Unit Trust", value: 410000, percent: 42, color: "rgb(112, 164, 188)" },
-	{ name: "Retirement Annuity", value: 360000, percent: 23, color: "rgb(153, 227, 195)" },
-	{ name: "Living Annuity", value: 255000, percent: 15, color: "rgb(35, 85, 114)" },
-	{ name: "Pension Preservation Fund", value: 140000, percent: 11, color: "rgb(93, 202, 165)" },
-	{ name: "Other", value: 87500, percent: 7, color: "rgb(187, 191, 197)" },
-];
-
 const getChartData = (items: typeof advisorData) => ({
-	labels: items.map((item) => item.name),
+	labels: items.map((item: (typeof advisorData)[number]) => item.name),
 	datasets: [
 		{
-			data: items.map((item) => item.value),
-			backgroundColor: items.map((item) => item.color),
+			data: items.map((item: (typeof advisorData)[number]) => item.value),
+			backgroundColor: items.map((item: (typeof advisorData)[number]) => item.color),
 			borderWidth: 2,
 			borderColor: "#fff",
 			hoverOffset: 0,
-			hoverBackgroundColor: items.map((item) => item.color),
+			hoverBackgroundColor: items.map((item: (typeof advisorData)[number]) => item.color),
 			hoverBorderColor: "#fff",
 			hoverBorderWidth: 2,
 		},
@@ -91,7 +76,7 @@ export default function DonutChartSwitcher() {
 
 			{/* Legend */}
 			<div className="mt-6 space-y-2 text-sm w-full">
-				{dataSet.map((item) => (
+				{dataSet.map((item: (typeof advisorData)[number]) => (
 					<div key={item.name} className="flex items-center justify-between gap-2 border-b pb-2 last:border-0">
 						<div className="flex items-center gap-2">
 							<div className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />

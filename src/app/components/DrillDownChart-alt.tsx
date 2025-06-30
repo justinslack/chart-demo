@@ -1,61 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useRef } from "react";
+import { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController, Filler } from "chart.js";
-import type { Chart, ChartData, ChartTypeRegistry } from "chart.js";
+import type { ChartData } from "chart.js";
 import { CustomTooltip } from "./ToolTip-alt";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-
-// Type alias for compatibility with ref
-type ChartJSOrUndefined<TType extends keyof ChartTypeRegistry = "bar"> = Chart<TType> | undefined;
+import { YEARS, MONTHS, LINE_YEARS, LINE_MONTHS, randomBarData, randomLineData, BarDatum } from "../../data/chartDataUtils";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, LineController, Filler);
 
-const YEARS = ["2021", "2022", "2023", "2024", "2025"];
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const LINE_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
-const LINE_MONTHS = [...MONTHS];
-
-// Generate monthly data with gentle up and down fluctuations
-const randomLineData = (years: string[], months: string[]): number[][] => {
-	return years.map(() => {
-		let base = 100 + Math.random() * 10;
-		return months.map(() => {
-			// Change between -2.5 and +4.5, so mostly up, sometimes down
-			const change = (Math.random() - 0.35) * 7; // -2.45 to +4.55
-			base += change;
-			return Number(base.toFixed(1));
-		});
-	});
-};
-
-type BarDatum = { percent: number; value: number };
-
-const randomBarData = (length: number): BarDatum[] =>
-	Array.from({ length }, () => {
-		const percent = Number((Math.random() * 40 - 20).toFixed(1));
-		const value = Math.floor(Math.random() * 200000) - 100000;
-		return { percent, value };
-	});
-
 const BarBackgroundPlugin = {
 	id: "barBackground",
-	beforeDatasetsDraw(chart: ChartJS) {
+	beforeDatasetsDraw(chart: any) {
 		const { ctx, chartArea, scales } = chart;
 		if (!chartArea) return;
-
 		const yAxis = scales.y;
 		const meta = chart.getDatasetMeta(0);
-
 		const yMin = yAxis.getPixelForValue(yAxis.min);
 		const yMax = yAxis.getPixelForValue(yAxis.max);
-
 		meta.data.forEach((bar: any) => {
 			const barWidth = bar.width;
 			const x = bar.x - barWidth / 2;
-
 			ctx.save();
 			ctx.fillStyle = "rgba(247, 248, 249, 0.95)";
 			ctx.fillRect(x, yMax, barWidth, yMin - yMax);
@@ -66,12 +33,11 @@ const BarBackgroundPlugin = {
 
 const getLineGradient = (ctx: CanvasRenderingContext2D, chartArea: any) => {
 	const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-	gradient.addColorStop(0, "rgba(233, 248, 247, 1.00)"); // top
-	gradient.addColorStop(1, "rgba(241, 247, 246, 0.5)"); // bottom
+	gradient.addColorStop(0, "rgba(233, 248, 247, 1.00)");
+	gradient.addColorStop(1, "rgba(241, 247, 246, 0.5)");
 	return gradient;
 };
 
-// Chart.js plugin to draw a vertical line at the hovered index
 const VerticalHoverLinePlugin = {
 	id: "verticalHoverLine",
 	afterDraw(chart: any) {
@@ -103,20 +69,15 @@ const DrillDownChart = () => {
 	const [activeTab, setActiveTab] = useState<"bar" | "line">("bar");
 	const [selectedLineYear, setSelectedLineYear] = useState<string>("all");
 	const [lineData] = useState(() => randomLineData(LINE_YEARS, LINE_MONTHS));
-	const chartRef = useRef<ChartJSOrUndefined<"bar">>(undefined);
 
 	const allPercents = barData.map((d) => d.percent);
-	const dataMin = Math.min(...allPercents);
-	const dataMax = Math.max(...allPercents);
-	const yMin = Math.floor(dataMin) - 2;
-	const yMax = Math.ceil(dataMax) + 2;
+	const yMin = Math.floor(Math.min(...allPercents)) - 2;
+	const yMax = Math.ceil(Math.max(...allPercents)) + 2;
 
-	const chartOptions: import("chart.js").ChartOptions<"bar"> = {
+	const chartOptions = {
 		responsive: true,
 		maintainAspectRatio: true,
-		elements: {
-			point: { radius: 0, hoverRadius: 4 },
-		},
+		elements: { point: { radius: 0, hoverRadius: 4 } },
 		scales: {
 			x: {
 				grid: { display: false },
@@ -126,18 +87,14 @@ const DrillDownChart = () => {
 				},
 			},
 			y: {
-				grid: {
-					display: true,
-					color: "rgb(247, 248, 249)",
-					lineWidth: 1,
-				},
+				grid: { display: true, color: "rgb(247, 248, 249)", lineWidth: 1 },
 				beginAtZero: false,
 				min: yMin,
 				max: yMax,
 				ticks: {
 					font: { family: "Montserrat, sans-serif", size: 14, weight: 500, lineHeight: 1.5 },
 					color: "#A4ABB2",
-					callback: (tickValue) => `${tickValue}%`,
+					callback: (tickValue: string | number) => `${tickValue}%`,
 				},
 				title: {
 					display: true,
@@ -148,15 +105,15 @@ const DrillDownChart = () => {
 				},
 			},
 		},
-		onClick: (event, elements) => {
+		onClick: (event: any, elements: any[]) => {
 			if (elements.length > 0 && view === "years") {
 				const year = YEARS[elements[0].index];
 				setSelectedYear(year);
-				setBarData(randomBarData(MONTHS.length));
+				setBarData(randomBarData(12));
 				setView("months");
 			}
 		},
-		interaction: { mode: "index", intersect: false },
+		interaction: { mode: "index" as const, intersect: false },
 		plugins: {
 			legend: { display: false },
 			title: { display: false },
@@ -170,18 +127,9 @@ const DrillDownChart = () => {
 		},
 	};
 
-	React.useEffect(() => {
-		return () => {
-			const el = document.getElementById("chartjs-custom-tooltip");
-			if (el) el.remove();
-		};
-	}, []);
-
-	const allMonths = LINE_YEARS.flatMap((year) => LINE_MONTHS.map((m) => `${year} ${m}`));
+	const allMonths = LINE_YEARS.flatMap((year: string) => LINE_MONTHS.map((m: string) => `${year} ${m}`));
 	const allLineValues = lineData.flat();
-
-	const filteredLineLabels = selectedLineYear === "all" ? allMonths : LINE_MONTHS.map((m) => `${selectedLineYear} ${m}`);
-
+	const filteredLineLabels = selectedLineYear === "all" ? allMonths : LINE_MONTHS.map((m: string) => `${selectedLineYear} ${m}`);
 	const filteredLineValues = selectedLineYear === "all" ? allLineValues : lineData[LINE_YEARS.indexOf(selectedLineYear)];
 
 	const lineChartData: ChartData<"line"> = {
@@ -196,7 +144,7 @@ const DrillDownChart = () => {
 				pointBorderColor: "rgb(84, 185, 202)",
 				tension: 0.4,
 				fill: true,
-				backgroundColor: function (context) {
+				backgroundColor: function (context: any) {
 					const chart = context.chart;
 					const { ctx, chartArea } = chart;
 					if (!chartArea) return "rgba(233, 248, 247, 1.00)";
@@ -207,12 +155,10 @@ const DrillDownChart = () => {
 		],
 	};
 
-	const lineChartOptions: import("chart.js").ChartOptions<"line"> = {
+	const lineChartOptions = {
 		responsive: true,
 		maintainAspectRatio: true,
-		elements: {
-			point: { radius: 2, hoverRadius: 5 },
-		},
+		elements: { point: { radius: 2, hoverRadius: 5 } },
 		scales: {
 			x: {
 				grid: { display: false },
@@ -222,11 +168,7 @@ const DrillDownChart = () => {
 				},
 			},
 			y: {
-				grid: {
-					display: true,
-					color: "rgb(247, 248, 249)",
-					lineWidth: 1,
-				},
+				grid: { display: true, color: "rgb(247, 248, 249)", lineWidth: 1 },
 				beginAtZero: false,
 				ticks: {
 					font: { family: "Montserrat, sans-serif", size: 12, weight: 500 },
@@ -248,11 +190,9 @@ const DrillDownChart = () => {
 				enabled: false,
 				external: ({ chart, tooltip }: any) => {
 					const idx = tooltip.dataPoints?.[0]?.dataIndex;
-
 					let value = 0;
 					let prev = 0;
 					let percent = "0.0";
-
 					if (selectedLineYear === "all") {
 						const flat = lineData.flat();
 						value = flat[idx] ?? 0;
@@ -263,13 +203,9 @@ const DrillDownChart = () => {
 						value = months[idx] ?? 0;
 						prev = idx > 0 ? months[idx - 1] : value;
 					}
-
 					if (prev !== 0) {
-						percent = (((value - prev) / Math.abs(prev)) * 100).toFixed(1);
+						percent = ((value / prev) * 100 - 100).toFixed(1);
 					}
-
-					console.log("✅ Tooltip data", { idx, value, percent });
-
 					chart._barData = [{ value, percent: parseFloat(percent) }];
 					CustomTooltip({ chart, tooltip });
 				},
@@ -312,7 +248,6 @@ const DrillDownChart = () => {
 
 			{activeTab === "bar" && (
 				<Bar
-					ref={chartRef}
 					data={{
 						labels: view === "years" ? YEARS : MONTHS,
 						datasets: [
@@ -340,7 +275,7 @@ const DrillDownChart = () => {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="all">All years</SelectItem>
-								{LINE_YEARS.map((year) => (
+								{LINE_YEARS.map((year: string) => (
 									<SelectItem key={year} value={year}>
 										{year}
 									</SelectItem>
